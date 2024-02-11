@@ -8,14 +8,40 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var vm = RandomPictureViewmodel()
+    @State var url = ""
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Text("Dog-Image-Generator")
+                .font(.headline)
+                .dynamicTypeSize(.accessibility1)
+            Spacer()
+            AsyncImage(url: URL(string: url))
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 350, height: 350, alignment: .leading)
+                .cornerRadius(20)
+            
+            
+            Spacer()
+            HStack{
+                Button("generate new image"){
+                    
+                }
+                .buttonStyle(.bordered)
+                .tint(.blue)
+                .controlSize(.large)
+            }
         }
-        .padding()
+        .onAppear(){
+            if vm.pictureData.message.isEmpty || vm.pictureData.status.isEmpty{
+                Task{
+                    await vm.fetchData()
+                    url = vm.pictureData.message
+                }
+                
+            }
+        }
     }
 }
 
